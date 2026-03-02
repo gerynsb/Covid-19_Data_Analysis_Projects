@@ -138,39 +138,3 @@ JOIN Portfolio_Project.CovidVaccinations vac
     AND dea.date = vac.date
 WHERE dea.continent IS NOT NULL AND dea.continent != ''
 ORDER BY dea.location, dea.date;
-
--- 10 ASEAN Numbers 
-SELECT 
-    'ASEAN' AS Region,
-    SUM(new_cases) AS Total_Cases, 
-    SUM(new_deaths) AS Total_Deaths, 
-    SUM(new_deaths) / NULLIF(SUM(new_cases), 0) AS Death_Percentage
-FROM Portfolio_Project.CovidDeaths
-WHERE location IN (
-    'Brunei', 'Cambodia', 'Indonesia', 'Laos', 'Malaysia', 
-    'Myanmar', 'Philippines', 'Singapore', 'Thailand', 'Vietnam'
-);
-
--- 11 ASEAN Vaccinated Numbers
-
-SELECT * from covidvaccinations;
-SELECT 
-    dea.location,
-    MAX(dea.population) AS Total_Population,
-    
-    -- Mengambil persentase dari tabel vaksinasi (vac)
-    MAX(vac.people_fully_vaccinated_per_hundred) / 100 AS Percent_Fully_Vaccinated,
-    
-    -- Menghitung jumlah orang dari gabungan tabel vac dan dea
-    (MAX(vac.people_fully_vaccinated_per_hundred) / 100) * MAX(dea.population) AS Total_People_Vaccinated
-
-FROM Portfolio_Project.CovidDeaths dea
-JOIN Portfolio_Project.CovidVaccinations vac
-    ON dea.location = vac.location
-    AND dea.date = vac.date
-WHERE dea.location IN (
-    'Brunei', 'Cambodia', 'Indonesia', 'Laos', 'Malaysia', 
-    'Myanmar', 'Philippines', 'Singapore', 'Thailand', 'Vietnam'
-)
-GROUP BY dea.location
-ORDER BY Percent_Fully_Vaccinated DESC;
